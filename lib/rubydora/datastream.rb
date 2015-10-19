@@ -2,7 +2,7 @@ require 'equivalent-xml'
 module Rubydora
   # This class represents a Fedora datastream object
   # and provides helper methods for creating and manipulating
-  # them. 
+  # them.
   class Datastream
     extend ActiveModel::Callbacks
     define_model_callbacks :save, :create, :destroy
@@ -21,7 +21,7 @@ module Rubydora
 
     define_attribute_methods DS_ATTRIBUTES.keys
 
-    # accessors for datastream attributes 
+    # accessors for datastream attributes
     DS_ATTRIBUTES.each do |attribute, profile_name|
       define_method attribute.to_s do
         var = "@#{attribute.to_s}".to_sym
@@ -95,7 +95,7 @@ module Rubydora
     # may not already exist in the datastore.
     #
     # Provides `after_initialize` callback for extensions
-    # 
+    #
     # @param [Rubydora::DigitalObject]
     # @param [String] Datastream ID
     # @param [Hash] default attribute values (used esp. for creating new datastreams)
@@ -131,7 +131,7 @@ module Rubydora
     # @param [Boolean] ensure_fetch <true> if true, it will grab the content from the repository if is not already loaded
     # @return [String]
     def local_or_remote_content(ensure_fetch = true)
-      return @content if new? 
+      return @content if new?
 
       @content ||= ensure_fetch ? datastream_content : @datastream_content
 
@@ -169,7 +169,7 @@ module Rubydora
     end
 
     # Set the content of the datastream
-    # @param [String or IO] 
+    # @param [String or IO]
     # @return [String or IO]
     def content= new_content
       raise "Can't change values on older versions" if @asOfDateTime
@@ -222,9 +222,9 @@ module Rubydora
     # it doesn't require holding the entire content in memory. If you specify the from and length
     # parameters it simulates a range request. Unfortunatly Fedora 3 doesn't have range requests,
     # so this method needs to download the whole thing and just seek to the part you care about.
-    # 
-    # @param [Integer] from (bytes) the starting point you want to return. 
-    # 
+    #
+    # @param [Integer] from (bytes) the starting point you want to return.
+    #
     def stream (from = 0, length = nil)
       counter = 0
       Enumerator.new do |blk|
@@ -246,7 +246,7 @@ module Rubydora
                 # At the end of what we beginning of what we need. Write the end of what was read.
                 offset = from - last_counter
                 blk << chunk[offset..-1]
-              else 
+              else
                 # In the middle. We need all of this
                 blk << chunk
               end
@@ -264,9 +264,9 @@ module Rubydora
         ## Force a recheck of the profile if they've passed :validateChecksum and we don't have dsChecksumValid
         return @profile
       end
-      
+
       return @profile = {} unless digital_object.respond_to? :repository
-      
+
       @profile = repository.datastream_profile(pid, dsid, opts[:validateChecksum], asOfDateTime)
     end
 
@@ -307,7 +307,7 @@ module Rubydora
       run_callbacks :save do
         raise RubydoraError.new("Unable to save #{self.inspect} without content") unless has_content?
         if new?
-          create 
+          create
         else
           p = repository.modify_datastream(to_api_params.merge({ :pid => pid, :dsid => dsid })) || {}
           reset_profile_attributes
@@ -353,10 +353,10 @@ module Rubydora
       controlGroup == 'X'
     end
 
-    
+
 
     protected
-    # datastream parameters 
+    # datastream parameters
     # @return [Hash]
     def to_api_params
       h = default_api_params
@@ -417,9 +417,9 @@ module Rubydora
     end
 
     def entity_size(response)
-      if content_length = response.headers[:content_length]
-        return content_length.to_i
-      end
+      #if content_length = response.headers[:content_length]
+      #  return content_length.to_i
+      #end
       response.body.length
     end
 
