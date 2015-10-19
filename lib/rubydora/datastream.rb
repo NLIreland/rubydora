@@ -417,9 +417,9 @@ module Rubydora
     end
 
     def entity_size(response)
-      #if content_length = response.headers[:content_length]
-      #  return content_length.to_i
-      #end
+      if content_length = response.content_length
+        return content_length.to_i
+      end
       response.body.length
     end
 
